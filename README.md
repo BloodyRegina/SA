@@ -29,4 +29,3 @@ sequenceDiagram
         deactivate Web Browser
     end
 end
-```
