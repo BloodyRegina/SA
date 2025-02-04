@@ -18,7 +18,7 @@ sequenceDiagram
         activate Database
         Database-->>Application Server: ยืนยันการบันทึก
         deactivate Database
-        Application Server-->>Web Browser: สำเร็จ
+        Application Server-->>WebBrowser: สำเร็จ
         deactivate Application Server
         Web Browser-->>User: แสดงข้อความสำเร็จ
         deactivate Web Browser
