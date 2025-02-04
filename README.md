@@ -1,16 +1,53 @@
-```mermaid
 sequenceDiagram
-    participant ผู้เช่า
-    participant ระบบ
-    participant ผู้ให้บริการชำระเงิน
+    participant User
+    participant Web Browser
+    participant Application Server
+    participant Database
 
-    ผู้เช่า->>ระบบ: เลือกเมนู "ชำระเงิน"
-    ระบบ->>ผู้เช่า: แสดงรายละเอียดค่าเช่าค้างชำระ
-    ผู้เช่า->>ระบบ: เลือกช่องทางการชำระเงิน
-    ผู้เช่า->>ระบบ: กรอกรายละเอียดการชำระเงิน
-    ระบบ->>ระบบ: ตรวจสอบความถูกต้องของข้อมูล
-    ระบบ->>ผู้ให้บริการชำระเงิน: ส่งคำขอชำระเงิน
-    ผู้ให้บริการชำระเงิน-->>ระบบ: ผลการชำระเงิน
-    ระบบ->>ระบบ: บันทึกข้อมูลการชำระเงิน
-    ระบบ->>ผู้เช่า: แสดงผลการชำระเงินสำเร็จ
-    ระบบ->>ผู้เช่า: ส่ง Email ยืนยันการชำระเงิน
+    group สมัครสมาชิก
+        User->>Web Browser: กรอกข้อมูลสมัครสมาชิก
+        activate Web Browser
+        Web Browser->>Application Server: ส่งข้อมูลสมัครสมาชิก
+        activate Application Server
+        Application Server->>Database: ตรวจสอบข้อมูลซ้ำ
+        activate Database
+        Database-->>Application Server: ผลการตรวจสอบ
+        deactivate Database
+        alt ข้อมูลไม่ซ้ำ
+            Application Server->>Database: บันทึกข้อมูลสมาชิกใหม่
+            activate Database
+            Database-->>Application Server: ยืนยันการบันทึก
+            deactivate Database
+            Application Server-->>Web Browser: สำเร็จ
+            deactivate Application Server
+            Web Browser-->>User: แสดงข้อความสำเร็จ
+            deactivate Web Browser
+        else ข้อมูลซ้ำ
+            Application Server-->>Web Browser: แจ้งข้อผิดพลาด
+            deactivate Application Server
+            Web Browser-->>User: แสดงข้อความผิดพลาด
+            deactivate Web Browser
+        end
+    end
+
+    group ล็อกอิน
+        User->>Web Browser: กรอกข้อมูลล็อกอิน
+        activate Web Browser
+        Web Browser->>Application Server: ส่งข้อมูลล็อกอิน
+        activate Application Server
+        Application Server->>Database: ตรวจสอบข้อมูลผู้ใช้
+        activate Database
+        Database-->>Application Server: ผลการตรวจสอบ
+        deactivate Database
+        alt ข้อมูลถูกต้อง
+            Application Server->>Web Browser: สร้าง Session
+            deactivate Application Server
+            Web Browser-->>User: เข้าสู่ระบบสำเร็จ
+            deactivate Web Browser
+        else ข้อมูลไม่ถูกต้อง
+            Application Server-->>Web Browser: แจ้งข้อผิดพลาด
+            deactivate Application Server
+            Web Browser-->>User: แสดงข้อความผิดพลาด
+            deactivate Web Browser
+        end
+    end
